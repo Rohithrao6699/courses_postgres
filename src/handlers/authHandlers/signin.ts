@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import { signInSchema } from "../zod/zodSchema";
 import { z } from "zod";
-import AuthService from "../dbServices/AuthService";
+import { signInSchema } from "../../zod/zodSchema";
+import AuthService from "../../dbServices/AuthService";
 
 export async function userSignIn(
   req: Request,
