@@ -47,6 +47,13 @@ class ProfileService {
       throw new AppError("profile not created", 403);
     }
   }
+
+  async deleteProfile(userId: number) {
+    const response = await prisma.profile.delete({
+      where: { userId: userId },
+    });
+    return response;
+  }
 }
 
 export default new ProfileService();
