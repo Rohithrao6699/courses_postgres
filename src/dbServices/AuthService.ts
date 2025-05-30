@@ -44,6 +44,15 @@ class AuthService {
       throw new AppError("user not found", 411);
     }
   }
+
+  async isUserAdmin(userId: number) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (user) {
+      return user;
+    }
+  }
 }
 
 export default new AuthService();
