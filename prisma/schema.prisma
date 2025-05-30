@@ -13,13 +13,14 @@ enum UserType {
 }
 
 model User {
-  id            Int      @id @default(autoincrement())
-  name          String?
-  email         String   @unique
-  password      String
-  role          UserType
-  profile       Profile?
-  CreatedCourse Course[]
+  id                     Int                      @id @default(autoincrement())
+  name                   String?
+  email                  String                   @unique
+  password               String
+  role                   UserType
+  profile                Profile?
+  CreatedCourse          Course[]
+  Users_Purchasedcourses Users_Purchasedcourses[]
 }
 
 model Profile {
@@ -32,10 +33,19 @@ model Profile {
 }
 
 model Course {
-  id        Int    @id @default(autoincrement())
-  title     String
-  url       String
-  seats     Int
-  creatorId Int
-  creator   User   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  id                     Int                      @id @default(autoincrement())
+  title                  String
+  url                    String
+  seats                  Int
+  creatorId              Int
+  creator                User                     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  Users_Purchasedcourses Users_Purchasedcourses[]
+}
+
+model Users_Purchasedcourses {
+  id       Int    @id @default(autoincrement())
+  userId   Int
+  courseId Int
+  user     User   @relation(fields: [userId], references: [id])
+  course   Course @relation(fields: [courseId], references: [id])
 }
