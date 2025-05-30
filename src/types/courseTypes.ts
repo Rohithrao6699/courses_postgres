@@ -12,3 +12,8 @@ type UpdateCourseType = {
   userId: number;
   courseId: number;
 };
+
+type PurchaseCourseType = {
+  courseId: number;
+  userId: number;
+};

@@ -66,8 +66,60 @@ class CouseService {
   async getAllCourses(userId: number) {
     const response = await prisma.course.findMany({
       where: { creatorId: userId },
+      include: {
+        Users_Purchasedcourses: { include: { user: true } },
+      },
     });
     return response;
+  }
+
+  async purchaseCourse(purchasedata: PurchaseCourseType) {
+    const isSeatsAvailable = await prisma.course.findUnique({
+      where: { id: purchasedata.courseId },
+    });
+    if (isSeatsAvailable && isSeatsAvailable.seats > 0) {
+      const response = await prisma.user.update({
+        where: { id: purchasedata.userId },
+        data: {
+          Users_Purchasedcourses: {
+            create: {
+              course: { connect: { id: purchasedata.courseId } },
+            },
+          },
+        },
+        include: {
+          Users_Purchasedcourses: { include: { course: true } },
+        },
+      });
+      const updatedCourseDetails = await prisma.course.update({
+        where: { id: purchasedata.courseId },
+        data: { seats: { decrement: 1 } },
+      });
+      return response;
+    } else {
+      throw new AppError("no seats left in course", 403);
+    }
+  }
+
+  async getUserCourse(userId: number) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!user) {
+      throw new AppError("user not existing", 411);
+    }
+    if (user.role === "user") {
+      const response = await prisma.user.findUnique({
+        where: { id: userId },
+        include: {
+          profile: true,
+          Users_Purchasedcourses: { include: { course: true } },
+        },
+      });
+      return response;
+    } else {
+      throw new AppError("unauthorized operation", 403);
+    }
   }
 }
 
